@@ -12,9 +12,6 @@ void printLine();
 void reconnectMQTT();
 
 // WiFi network name and password:
-// const char * networkName = "Aaniverstas4G";
-// const char * networkPswd = "AbbeyRoad10AK";
-// WiFi network name and password:
 const char * networkName = "";
 const char * networkPswd = "";
 
