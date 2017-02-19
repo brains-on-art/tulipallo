@@ -15,8 +15,8 @@ void reconnectMQTT();
 // const char * networkName = "Aaniverstas4G";
 // const char * networkPswd = "AbbeyRoad10AK";
 // WiFi network name and password:
-const char * networkName = "Aleksander 4G";
-const char * networkPswd = "KWMAWRfK";
+const char * networkName = "";
+const char * networkPswd = "";
 
 // Internet domain to request from:
 // const char * hostDomain = "example.com";
