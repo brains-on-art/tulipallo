@@ -1,0 +1,129 @@
+/**
+ * Helloworld style, connect an ESP32 to IBM's Watson IoT Platform
+ *
+ * Author: Anthony Elder
+ * License: Apache License v2
+ */
+#include <SPI.h>
+#include <WiFi.h>
+#include <PubSubClient.h>
+
+// FUNCTION PROTOTYPES (??)
+void initWiFi();
+// void requestURL(const char * host, uint16_t port);
+// void printLine();
+
+//-------- Customise these values -----------
+const char* ssid = "Aaniverstas4G";
+const char* password = "AbbeyRoad10AK";
+
+#define ORG "BOA" // your organization or "quickstart"
+#define DEVICE_TYPE "esp32" // use this default for quickstart or customize to your registered device type
+#define DEVICE_ID "pallo1" // use this default for quickstart or customize to your registered device id
+// #define TOKEN "<yourDeviceToken>" // your device token or not used with "quickstart"
+//-------- Customise the above values --------
+
+char server[] = "192.168.8.108";
+char topic[] = "/laituri";
+// char authMethod[] = "use-token-auth";
+// char token[] = TOKEN;
+char clientId[] = "d:" ORG ":" DEVICE_TYPE ":" DEVICE_ID;
+
+WiFiClient wifiClient;
+PubSubClient client(server, 1883, wifiClient);
+
+void setup() {
+    Serial.begin(115200); delay(1); Serial.println();
+
+    initWiFi();
+    // requestURL("http://example.com", 80);
+}
+
+void loop() {
+
+    if (!!!client.connected()) {
+        Serial.print("Connecting pubsubclient to "); Serial.println(server);
+        // while (!!!client.connect(clientId, authMethod, token)) {
+        while (!!!client.connect(clientId)) {
+            Serial.println(client.state());
+            delay(500);
+        }
+        Serial.println();
+    }
+
+    String payload = "{ \"d\" : {\"RSSI\":";
+    payload += WiFi.RSSI();
+    payload += "}}";
+
+    Serial.print("Sending payload: "); Serial.println(payload);
+
+    if (client.publish(topic, (char*) payload.c_str())) {
+        Serial.println("Publish ok");
+    } else {
+        Serial.println("Publish failed");
+    }
+    delay(3000);
+}
+
+void initWiFi() {
+    Serial.print("Connecting to "); Serial.print(ssid);
+    if (strcmp (WiFi.SSID().c_str(), ssid) != 0) {
+        WiFi.begin(ssid, password);
+    }
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.println(""); Serial.print("WiFi connected, IP address: "); Serial.println(WiFi.localIP());
+}
+
+// void requestURL(const char * host, uint16_t port)
+// {
+//   printLine();
+//   Serial.println("Connecting to domain: " + String(host));
+//
+//   // Use WiFiClient class to create TCP connections
+//   // WiFiClient client;
+//   if (!wifiClient.connect(host, port))
+//   {
+//     Serial.println("connection failed");
+//     wifiClient.stop();
+//     return;
+//   }
+//   Serial.println("Connected!");
+//   printLine();
+//
+//   // This will send the request to the server
+//   wifiClient.print((String)"GET / HTTP/1.1\r\n" +
+//                "Host: " + String(host) + "\r\n" +
+//                "Connection: close\r\n\r\n");
+//   unsigned long timeout = millis();
+//   while (wifiClient.available() == 0)
+//   {
+//     if (millis() - timeout > 5000)
+//     {
+//       Serial.println(">>> Client Timeout !");
+//       wifiClient.stop();
+//       return;
+//     }
+//   }
+//
+//   // Read all the lines of the reply from server and print them to Serial
+//   while (wifiClient.available())
+//   {
+//     String line = wifiClient.readStringUntil('\r');
+//     Serial.print(line);
+//   }
+//
+//   Serial.println();
+//   Serial.println("closing connection");
+//   wifiClient.stop();
+// }
+//
+// void printLine()
+// {
+//   Serial.println();
+//   for (int i=0; i<30; i++)
+//     Serial.print("-");
+//   Serial.println();
+// }
