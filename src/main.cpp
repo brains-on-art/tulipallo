@@ -41,9 +41,9 @@ WiFiClient wifiClient;
 PubSubClient MQTTclient(wifiClient);
 // -- end MQTT stuff --
 
-// int counter = 0;
+int counter = 0;
 // int ledDelay = 500;
-// int mqttCounterFreq = 20;
+int mqttCounterFreq = 50000;
 
 void setup()
 {
@@ -102,10 +102,10 @@ void loop()
     // pixels[0] = makeRGBVal(random(55)+200, random(155)+100, random(155));
     // ws2812_setColors(NUM_PIXELS, pixels);
     //
-    // if (counter >= mqttCounterFreq) {
-    //     publishData();
-    //     counter = 0;
-    // } else counter += 1;
+    if (counter >= mqttCounterFreq) {
+        publishData();
+        counter = 0;
+    } else counter += 1;
     // delay(ledDelay);
 }
 
@@ -193,14 +193,14 @@ void connectToWiFi(const char * ssid, const char * pwd)
 
   Serial.println("Connecting to WiFi network: " + String(ssid));
 
-  WiFi.begin(ssid, pwd);
 
   while (WiFi.status() != WL_CONNECTED)
   {
+    WiFi.begin(ssid, pwd);
     // Blink LED while we're connecting:
     digitalWrite(ONBOARD_LED_PIN, ledState);
     ledState = (ledState + 1) % 2; // Flip ledState
-    delay(500);
+    delay(5000);
     Serial.print(".");
   }
 
